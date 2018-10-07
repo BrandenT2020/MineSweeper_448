@@ -82,14 +82,15 @@ class mineField {
         setTimeout(function () {
           window.alert('You Lose\nClick create board to try again')
         }, 25)
-      }
-      // checks for all of the possible types of cells the clicked one could be
-      if (this.arr[row][col].adjminenum === 0) {
-        this.Expand(cell, row, col)
       } else {
-        for (let i = 1; i <= 8; i++) {
-          if (this.arr[row][col].adjminenum === i) {
-            cell[row][col].className = 'clicked' + i
+      // checks for all of the possible types of cells the clicked one could be
+        if (this.arr[row][col].adjminenum === 0) {
+          this.Expand(cell, row, col)
+        } else {
+          for (let i = 1; i <= 8; i++) {
+            if (this.arr[row][col].adjminenum === i) {
+              cell[row][col].className = 'clicked' + i
+            }
           }
         }
       }
@@ -257,7 +258,7 @@ class mineField {
     let coordinate = '(' + y + ',' + x + ')'
     let revealedTiles = this.revealedTiles(cell)
     let bombstoBeFlagged = this.bombsLeft()
-    return ('Coordinates: '+coordinate + '  Revealed Tiles: ' + revealedTiles + ' Other: ' + bombstoBeFlagged)
+    return ('Coordinates: ' + coordinate + '  Revealed Tiles: ' + revealedTiles + ' Other: ' + bombstoBeFlagged)
   }
 
   /**
@@ -267,27 +268,20 @@ class mineField {
 * @returns - amount of unchartedTiles left
 */
   revealedTiles (cell) {
-		let revealed = 0
-		let x = this.height
-		let y = this.width
-	for (let i = 1; i < 9 ; i++){
-		for (let k = 0; k < x; k++) {
+    let revealed = 0
+    let x = this.height
+    let y = this.width
+    let pattern = /clicked/
+    for (let k = 0; k < x; k++) {
       for (let j = 0; j < y; j++) {
-        if (cell[k][j].className === 'clicked' + i) {
+        if (pattern.test(cell[k][j].className || cell[k][j].className === 'flag')) {
           revealed++
         }
       }
     }
-	}
-	for (let k = 0; k < x; k++) {
-		for (let j = 0; j < y; j++) {
-			if (cell[k][j].className === 'clicked') {
-				revealed++
-			}
-		}
-	}
-		let total = x * y
-		let final = revealed + '/' + total
+
+    let total = x * y
+    let final = (revealed + (this.bombs - this.flags)) + '/' + total
     return final
   }
 
